@@ -1,18 +1,9 @@
-import { Configuration, FrontendApi } from "@ory/client"
-
-const frontend = new FrontendApi(
-    new Configuration({
-        basePath: "http://localhost:4433",
-        baseOptions: {
-            withCredentials: true,
-        },
-    }),
-)
+import {ory} from "../ory.ts";
 
 export function LogoutButton() {
     const handleLogout = async () => {
         try {
-            const { data: flow } = await frontend.createBrowserLogoutFlow()
+            const { data: flow } = await ory.createBrowserLogoutFlow()
             await frontend.updateLogoutFlow({
                 token: flow.logout_token,
             })

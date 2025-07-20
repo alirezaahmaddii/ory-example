@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react"
-import { getSession, ory } from "../auth.ts"
+import { getSession } from "../auth.ts"
 import { LogoutButton } from "./LogoutButton.tsx"
+import {ory} from "../ory.ts";
 
 export const Home = () => {
     const [session, setSession] = useState(null)

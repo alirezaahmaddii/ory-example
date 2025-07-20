@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import {oryService} from "../ory-service.ts";
+import {ory} from "../ory.ts";
 
 export const Login = () => {
     const [flow, setFlow] = useState<any | null>(null)
@@ -14,7 +14,7 @@ export const Login = () => {
         const flowId = search.get('flow')
 
         if (flowId) {
-            oryService
+            ory
                 .getLoginFlow({ id: flowId })
                 .then(({ data }) => {
                     setFlow(data)
@@ -30,7 +30,7 @@ export const Login = () => {
 
     const createFlow = async () => {
         try {
-            const { data } = await oryService.createBrowserLoginFlow()
+            const { data } = await ory.createBrowserLoginFlow()
             navigate(`/login?flow=${data.id}`, { replace: true })
             setFlow(data)
         } catch (err) {
@@ -43,7 +43,7 @@ export const Login = () => {
         if (!flow) return
 
         try {
-            const { data } = await oryService.updateLoginFlow({
+            const { data } = await ory.updateLoginFlow({
                 flow: flow.id,
                 updateLoginFlowBody: {
                     method: 'password',
