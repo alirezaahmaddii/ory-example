@@ -1,15 +1,6 @@
 import { useEffect, useState } from 'react'
-import { Configuration, FrontendApi } from '@ory/client'
 import { useNavigate } from 'react-router-dom'
-
-const ory = new FrontendApi(
-    new Configuration({
-        basePath: 'http://localhost:4433',
-        baseOptions: {
-            withCredentials: true,
-        },
-    })
-)
+import {oryService} from "../ory-service.ts";
 
 export const Login = () => {
     const [flow, setFlow] = useState<any | null>(null)
@@ -23,7 +14,7 @@ export const Login = () => {
         const flowId = search.get('flow')
 
         if (flowId) {
-            ory
+            oryService
                 .getLoginFlow({ id: flowId })
                 .then(({ data }) => {
                     setFlow(data)
@@ -39,7 +30,7 @@ export const Login = () => {
 
     const createFlow = async () => {
         try {
-            const { data } = await ory.createBrowserLoginFlow()
+            const { data } = await oryService.createBrowserLoginFlow()
             navigate(`/login?flow=${data.id}`, { replace: true })
             setFlow(data)
         } catch (err) {
@@ -52,7 +43,7 @@ export const Login = () => {
         if (!flow) return
 
         try {
-            const { data } = await ory.updateLoginFlow({
+            const { data } = await oryService.updateLoginFlow({
                 flow: flow.id,
                 updateLoginFlowBody: {
                     method: 'password',
@@ -62,7 +53,7 @@ export const Login = () => {
                 },
             })
 
-            console.log('✅ Login successful:', data)
+            console.log('Login successful:', data)
             navigate('/')
         } catch (err: any) {
             const msg = err?.response?.data?.ui?.messages?.[0]?.text || 'Login failed'

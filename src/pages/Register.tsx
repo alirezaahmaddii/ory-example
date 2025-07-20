@@ -1,15 +1,6 @@
 import { useEffect, useState } from 'react'
-import { Configuration, FrontendApi } from '@ory/client'
 import { useNavigate } from 'react-router-dom'
-
-const ory = new FrontendApi(
-    new Configuration({
-        basePath: 'http://localhost:4433',
-        baseOptions: {
-            withCredentials: true,
-        },
-    })
-)
+import {oryService} from "../ory-service.ts";
 
 export const Register = () => {
     const [flow, setFlow] = useState<any | null>(null)
@@ -25,7 +16,7 @@ export const Register = () => {
         const flowId = search.get('flow')
 
         if (flowId) {
-            ory.getRegistrationFlow({ id: flowId })
+            oryService.getRegistrationFlow({ id: flowId })
                 .then(({ data }) => setFlow(data))
                 .catch(() => createFlow())
         } else {
@@ -35,11 +26,11 @@ export const Register = () => {
 
     const createFlow = async () => {
         try {
-            const { data } = await ory.createBrowserRegistrationFlow()
+            const { data } = await oryService.createBrowserRegistrationFlow()
             navigate(`/register?flow=${data.id}`, { replace: true })
             setFlow(data)
         } catch (err) {
-            console.error('❌ error creating flow:', err)
+            console.error('error creating flow:', err)
         }
     }
 
@@ -48,7 +39,7 @@ export const Register = () => {
         if (!flow) return
 
         try {
-            const { data } = await ory.updateRegistrationFlow({
+            const { data } = await oryService.updateRegistrationFlow({
                 flow: flow.id,
                 updateRegistrationFlowBody: {
                     method: 'password',
@@ -65,11 +56,11 @@ export const Register = () => {
                 }
             })
 
-            console.log('✅ Registration successful:', data)
+            console.log('Registration successful:', data)
             navigate('/login')
         } catch (err: any) {
             const msg = err?.response?.data?.ui?.messages?.[0]?.text || 'Registration failed'
-            console.error('❌ Registration error:', err)
+            console.error('Registration error:', err)
             setError(msg)
         }
     }

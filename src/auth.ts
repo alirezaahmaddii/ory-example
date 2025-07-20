@@ -1,4 +1,4 @@
-import { Configuration, FrontendApi } from '@ory/client-fetch'
+import {Configuration, FrontendApi} from '@ory/client-fetch'
 
 export const ory = new FrontendApi(
     new Configuration({
@@ -8,7 +8,7 @@ export const ory = new FrontendApi(
 
 export async function getSession() {
     try {
-        const { identity } = await ory.toSession()
+        const {identity} = await ory.toSession()
         return identity
     } catch (err) {
         throw new Error('Not authenticated')
